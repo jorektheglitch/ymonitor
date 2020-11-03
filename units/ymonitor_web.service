@@ -1,0 +1,14 @@
+[Unit]
+Description=Web-extension for Yggdrasil coords monitoring service
+After=syslog.target
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/ymonitor/
+ExecStart=/opt/ymonitor/ymonitor_webview.py
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
