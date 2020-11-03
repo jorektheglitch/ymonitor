@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Storm Monitoring</title>
+	<style>
+		.centered {
+			margin: 0 auto;
+		}
+		.center_t {
+			text-align: center;
+		}
+		table {
+			margin: 0 auto;
+			border: 2px solid black;
+		}
+		tr:first-child {
+			padding-left: 20%;
+			padding-right: 20%;
+		}
+		th {
+			border: 1px solid black;
+		}
+		td {
+			white-space: nowrap;
+		}
+		td:first-child {
+			text-align: left;
+			border-right: 1px solid gray;
+			padding-left: 5%;
+			padding-right: 5%;
+		}
+	</style>
+</head>
+
+<body>
+	<h3 class="center_t">Yggdrasil Storm Monitoring</h2>
+		<div class="centered">
+			<noscript>
+				<p>This page requires JavaScript</p>
+			</noscript>
+			<table id="shifts">
+				<tr>
+					<th>Start of hour</th>
+					<th>Coords shifts</th>
+				</tr>
+			</table>
+		</div>
+		<script async src="/dateformat.js"></script>
+		<script defer>
+			const PATH = '/api/week/by_hour';
+			const sortNum = (a, b) => parseInt(a) - parseInt(b);
+			const table = document.getElementById("shifts");
+			(async () => {
+				const res = await fetch(PATH)
+				const data = await res.json()
+				for (const hour of Object.keys(data).sort(sortNum)) {
+					const el = document.createElement("tr")
+					const date = new Date((hour | 0) * 1000)
+					el.innerHTML = `<td>${date.format("dd.mm.yyyy hh")}:00</td><td class="center_t">${data[hour]}</td>`
+					table.append(el)
+				}
+			})().catch(() => {
+				table.innerHTML = "Failed to load shifts from API, please try again later"
+			})
+			setTimeout(() => location.reload(), 5 * 60 * 1000)
+		</script>
+</body>
