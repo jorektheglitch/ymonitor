@@ -21,9 +21,11 @@
 		}
 		th {
 			border: 1px solid black;
+			text-align: center;
 		}
 		td {
 			white-space: nowrap;
+			text-align: center;
 		}
 		td:first-child {
 			text-align: left;
@@ -35,35 +37,100 @@
 </head>
 
 <body>
-	<h3 class="center_t">Yggdrasil Storm Monitoring</h2>
-		<div class="centered">
-			<noscript>
-				<p>This page requires JavaScript</p>
-			</noscript>
-			<table id="shifts">
-				<tr>
-					<th>Start of hour</th>
-					<th>Coords shifts</th>
-				</tr>
-			</table>
-		</div>
-		<script async src="/dateformat.js"></script>
-		<script defer>
-			const PATH = '/api/week/by_hour';
-			const sortNum = (a, b) => parseInt(a) - parseInt(b);
-			const table = document.getElementById("shifts");
-			(async () => {
-				const res = await fetch(PATH)
-				const data = await res.json()
-				for (const hour of Object.keys(data).sort(sortNum)) {
-					const el = document.createElement("tr")
-					const date = new Date((hour | 0) * 1000)
-					el.innerHTML = `<td>${date.format("dd.mm.yyyy hh")}:00</td><td class="center_t">${data[hour]}</td>`
-					table.append(el)
-				}
-			})().catch(() => {
-				table.innerHTML = "Failed to load shifts from API, please try again later"
-			})
-			setTimeout(() => location.reload(), 5 * 60 * 1000)
-		</script>
+	<h3 class="center_t">Yggdrasil Storm Monitoring</h3>
+	<h4 class="center_t" id="intervals">Interval: </h4></div>
+	<div class="centered">
+		<noscript>
+			<p>This page requires JavaScript</p>
+		</noscript>
+		<table id="shifts">
+			<tr>
+				<th>Start of hour</th>
+				<th>Coords shifts</th>
+			</tr>
+		</table>
+	</div>
+	<script async src="/dateformat.js"></script>
+	<script async>
+		let base_url = location.protocol+'//'+
+			location.hostname+
+			(location.port?":"+location.port:"")+
+			location.pathname+
+			(location.search?location.search:"");
+		let div = document.getElementById("intervals");
+		let intervals = [
+			["day", "day"], ["week", "week"], 
+			["half of mounth", "halfmounth"], 
+			["all time", "all"]
+		];
+		for (let [name, keyword] of intervals){
+			let link = document.createElement("a");
+			link.innerText = name;
+			link.setAttribute("href", `${base_url}#${keyword}`);
+			div.append(link);
+			div.innerHTML += " ";
+		};
+	</script>
+	<script defer>
+		const sortNum = (a, b) => parseInt(a) - parseInt(b);
+		const table = document.getElementById("shifts");
+		const clean_table = table.innerHTML;
+		function safe_get_lochash(params) {
+			let hash = location.hash.substring(1);
+			if (["day", "week", "halfmounth", "all"].includes(hash)){
+				return hash;
+			} else {
+				return "day"
+			};
+		};
+		async function upd_table() {
+			let path = `/api/${safe_get_lochash()}/by_hour`;
+			const res = await fetch(path);
+			const data = await res.json();
+			if (data) {
+				table.innerHTML = clean_table;
+			};
+			for (const hour of Object.keys(data).sort(sortNum)) {
+				const el = document.createElement("tr");
+				const date = new Date((hour | 0) * 1000);
+				let dt_field = document.createElement("td");
+				dt_field.innerText = `${date.format("dd.mm.yyyy HH")}:00`;
+				let shifts_feld = document.createElement("td");
+				shifts_feld.innerText = `${data[hour]}`;
+				el.append(dt_field);
+				el.append(shifts_feld);
+				table.append(el);
+			};
+		};
+		function upd_table_or_err() {
+			upd_table().then(
+				(success) => {
+					del_err();
+				},
+				(error) => {
+					show_err();
+				});
+		};
+		function show_err(error) {
+			let err_msg = document.getElementsByClassName("error_message")[0];
+			if (!err_msg) {
+				let err_msg = document.createElement("h6");
+				err_msg.className = "error_message center_t";
+				err_msg.innerText = `\
+				Can't fetch shifts from server.\n\
+				Reason: ${error}.\n\n\
+				Please wait or try to reload page.\n`;
+				table.before(err_msg);
+			};
+			console.error(error);
+		}
+		function del_err() {
+			let err_msg = document.getElementsByClassName("error_message")[0];
+			if (err_msg) {
+				err_msg.remove();
+			};
+		};
+		upd_table_or_err();
+		setInterval(upd_table_or_err, 5 * 1000);
+	</script>
 </body>
