@@ -67,6 +67,7 @@
 			let link = document.createElement("a");
 			link.innerText = name;
 			link.setAttribute("href", `${base_url}#${keyword}`);
+			link.className = "interval";
 			div.append(link);
 			div.innerHTML += " ";
 		};
@@ -131,6 +132,9 @@
 			};
 		};
 		upd_table_or_err();
-		setInterval(upd_table_or_err, 5 * 1000);
+		for(let interval_link of document.getElementsByClassName("interval")){
+			interval_link.onclick = upd_table_or_err;
+		}
+		setInterval(upd_table_or_err, 5 * 60 * 1000);
 	</script>
 </body>
