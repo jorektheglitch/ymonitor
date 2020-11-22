@@ -6,7 +6,7 @@ After=network.target
 [Service]
 Type=simple
 WorkingDirectory=/opt/ymonitor/
-ExecStart=/opt/ymonitor/ymonitor_webview.py
+ExecStart=/opt/ymonitor/ymonitor/venv/bin/python3 /opt/ymonitor/ymonitor/ymonitor_webview.py
 Restart=always
 RestartSec=10
 

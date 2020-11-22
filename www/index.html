@@ -120,7 +120,7 @@
 				err_msg.innerText = `\
 				Can't fetch shifts from server.\n\
 				Reason: ${error}.\n\n\
-				Please wait or try to reload page.\n`;
+				Please wait or try to reload this page.\n`;
 				table.before(err_msg);
 			};
 			console.error(error);
@@ -133,8 +133,10 @@
 		};
 		upd_table_or_err();
 		for(let interval_link of document.getElementsByClassName("interval")){
-			interval_link.onclick = upd_table_or_err;
-		}
+			interval_link.onclick = () => {
+				setTimeout(upd_table_or_err, 10);
+			};
+		};
 		setInterval(upd_table_or_err, 5 * 60 * 1000);
 	</script>
 </body>

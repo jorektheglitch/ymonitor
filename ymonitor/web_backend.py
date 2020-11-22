@@ -4,16 +4,16 @@ from concurrent.futures import ProcessPoolExecutor
 from functools import partial
 from aiohttp import web
 
-from events import EventsReader, Intervals
-
 import logging
 import argparse
-
+from sys import argv
 from pathlib import Path
+
+from utils.db import DBReader, Intervals
 
 
 DB_NAME = 'events.db'
-e_reader = EventsReader(DB_NAME)
+e_reader = DBReader(DB_NAME)
 executor = ProcessPoolExecutor(16)
 
 
@@ -62,14 +62,14 @@ app.router.add_static('/', static_dir)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        prog='webservice.py',
+        prog=argv[0],
         description='Webservice for Yggdrasil monitor')
     parser.add_argument('--host', metavar='host', type=str,
                         help='addres to bind webservice to',
-                        default='0.0.0.0', required=False)
-    parser.add_argument('--port', metavar='host', type=int,
+                        default='127.0.0.1', required=False)
+    parser.add_argument('--port', metavar='port', type=int,
                         help='port to bind webservice to',
-                        default=9080, required=False)
+                        default=8080, required=False)
     args = parser.parse_args()
     host = args.host
     port = args.port
