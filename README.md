@@ -10,7 +10,9 @@ Web service provides simple web page with log's summary.
 
 Running commands below do the installation (in directory /opt/ymonitor/).
 
-```git clone https://github.com/jorektheglitch/ymonitor.git
+```
+git clone https://github.com/jorektheglitch/ymonitor.git
 cd ./ymonitor/
 chmod +x setup.sh
-sudo ./setup.sh```
+sudo ./setup.sh
+```
