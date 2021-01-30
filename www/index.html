@@ -4,36 +4,7 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Storm Monitoring</title>
-	<style>
-		.centered {
-			margin: 0 auto;
-		}
-		.center_t {
-			text-align: center;
-		}
-		table {
-			margin: 0 auto;
-			border: 2px solid black;
-		}
-		tr:first-child {
-			padding-left: 20%;
-			padding-right: 20%;
-		}
-		th {
-			border: 1px solid black;
-			text-align: center;
-		}
-		td {
-			white-space: nowrap;
-			text-align: center;
-		}
-		td:first-child {
-			text-align: left;
-			border-right: 1px solid gray;
-			padding-left: 0.5em;
-			padding-right: 0.5em;
-		}
-	</style>
+	<link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
@@ -88,10 +59,18 @@
 			let path = `/api/${safe_get_lochash()}/by_hour`;
 			const res = await fetch(path);
 			const data = await res.json();
-			if (data) {
-				table.innerHTML = clean_table;
+			const row_heads = Object.keys(data).sort(sortNum);
+			table.innerHTML = clean_table;
+			if (!Object.keys(data).length) {
+				let message_row = document.createElement("tr");
+				let message = document.createElement("td");
+				message.innerText = "There was no shifts. Stability!";
+				message.className = "center_t empty_msg";
+				message.colSpan = "2";
+				message_row.append(message);
+				table.append(message_row);
 			};
-			for (const hour of Object.keys(data).sort(sortNum)) {
+			for (const hour of row_heads) {
 				const el = document.createElement("tr");
 				const date = new Date((hour | 0) * 1000);
 				let dt_field = document.createElement("td");
@@ -137,6 +116,6 @@
 				setTimeout(upd_table_or_err, 10);
 			};
 		};
-		setInterval(upd_table_or_err, 5 * 60 * 1000);
+		setInterval(upd_table_or_err, /*5 * 60*/ 10 * 1000);
 	</script>
 </body>
