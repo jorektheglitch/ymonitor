@@ -15,4 +15,5 @@ git clone https://github.com/jorektheglitch/ymonitor.git
 cd ./ymonitor/
 chmod +x setup.sh
 sudo ./setup.sh
+sudo systemctl enable ymonitor
 ```
