@@ -1,6 +1,26 @@
+let href = location.href;
+const base_url = href.slice(0, href.length - location.hash.length);
+const intervals = [
+	["day", "day"], ["week", "week"],
+	["half of mounth", "halfmounth"],
+	["all time", "all"]
+];
+let intervals_container = document.getElementById("intervals");
+
+for (let [name, keyword] of intervals) {
+	let link = document.createElement("a");
+	link.innerText = name;
+	link.setAttribute("href", `${base_url}#${keyword}`);
+	link.className = "interval";
+	intervals_container.append(link);
+	intervals_container.innerHTML += " ";
+};
+
+
 const sortNum = (a, b) => parseInt(a) - parseInt(b);
 const table = document.getElementById("shifts");
 const cleanTable = table.innerHTML;
+
 function getKeywordFromHash() {
 	let hash = location.hash.substring(1);
 	if (["day", "week", "halfmounth", "all"].includes(hash)) {
@@ -9,6 +29,7 @@ function getKeywordFromHash() {
 		return "day"
 	};
 };
+
 async function updateTableContent() {
 	let path = `/api/${getKeywordFromHash()}/by_hour`;
 	const res = await fetch(path);
@@ -36,6 +57,7 @@ async function updateTableContent() {
 		table.append(el);
 	};
 };
+
 function updateTable() {
 	updateTableContent().then(
 		(success) => {
@@ -45,6 +67,7 @@ function updateTable() {
 			showErr(error);
 		});
 };
+
 function showErr(error) {
 	let container = document.getElementsByClassName("error_message")[0];
 	if (!container) {
@@ -59,16 +82,20 @@ function showErr(error) {
 	};
 	console.error(error);
 }
+
 function delErr() {
 	let container = document.getElementsByClassName("error_message")[0];
 	if (container) {
 		container.remove();
 	};
 };
+
 updateTable();
+
 for (let hashLink of document.getElementsByClassName("interval")) {
 	hashLink.onclick = () => {
 		setTimeout(updateTable, 10);
 	};
 };
+
 setInterval(updateTable, 5 * 60 * 1000); //one update per 5 minutes
