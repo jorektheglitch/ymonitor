@@ -1,10 +1,11 @@
-from sqlite3 import Connection
-from sqlite3 import connect as connect_db
-
 from datetime import (
     datetime as dt,
     timezone as tz
 )
+from sqlite3 import Connection, Cursor
+from sqlite3 import connect as connect_db
+
+from typing import Optional
 
 
 class DBWriter:
@@ -26,10 +27,10 @@ class DBWriter:
     """
 
     def __init__(self, db_name: str = None, connection: Connection = None):
-        self.conn = connection or connect_db(db_name)
-        self.cursor = self.conn.cursor()
-        self.ygg_alive = False
-        self.coords = None
+        self.conn: Connection = connection or connect_db(db_name)
+        self.cursor: Cursor = self.conn.cursor()
+        self.ygg_alive: bool = False
+        self.coords: Optional[str] = None
         self.cursor.execute(self.init_db)
         self.conn.commit()
 
@@ -44,7 +45,7 @@ class DBWriter:
             self.conn.commit()
 
     def coords_event_handler(self, coords: str) -> None:
-        now = dt.now()
+        now: dt = dt.now()
         if not self.ygg_alive:
             print('[{}] Ygg up'.format(now))
             self.ygg_alive = True

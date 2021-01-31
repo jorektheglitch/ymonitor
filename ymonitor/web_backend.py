@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
 import asyncio
+import argparse
+import logging
 from concurrent.futures import ProcessPoolExecutor
 from functools import partial
-from aiohttp import web
-
-import logging
-import argparse
-from sys import argv
 from pathlib import Path
+from sys import argv
 
 from typing import Callable, Coroutine, Type
+
+from aiohttp import web
 
 from db.sqlite import DBReader
 from utils.enums import Intervals
@@ -68,11 +68,14 @@ handlers = {
 }
 
 for interval in Intervals:
-    i_name = interval.name
-    for name, (func, rtype) in handlers.items():
-        route = '/api/{}/{}'.format(i_name, name)
-        handler = cast_hadler(func, rtype, i_name)
-        app.router.add_route('GET', route, handler)
+    i_name: str = interval.name
+    for grouping, (func, response_type) in handlers.items():
+        path = '/api/{interval_name}/{grouping}'.format(
+            interval_name=i_name,
+            grouping=grouping
+        )
+        handler = cast_hadler(func, response_type, i_name)
+        app.router.add_route('GET', path, handler)
 static_dir = Path.cwd() / 'www'
 app.router.add_static('/', static_dir)
 

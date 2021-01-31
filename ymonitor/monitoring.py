@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
+import json
 from sqlite3 import connect
 from socket import create_connection, error as sock_err
-import json
 from time import sleep
 
 from typing import Optional
