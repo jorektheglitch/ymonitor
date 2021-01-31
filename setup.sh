@@ -3,6 +3,7 @@
 # Simple yggdrasil node monitoring
 # https://github.com/jorektheglitch/ymonitor
 
+mkdir -p /opt/ymonitor
 cp -rf ./* /opt/ymonitor/
 cd /opt/ymonitor
 
