@@ -83,13 +83,18 @@ app.router.add_static('/', static_dir)
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         prog=argv[0],
-        description='Webservice for Yggdrasil monitor')
-    parser.add_argument('--host', metavar='host', type=str,
-                        help='addres to bind webservice to',
-                        default='127.0.0.1', required=False)
-    parser.add_argument('--port', metavar='port', type=int,
-                        help='port to bind webservice to',
-                        default=8080, required=False)
+        description='Webservice for Yggdrasil 0.4 coords monitor'
+    )
+    parser.add_argument(
+        '--host', metavar='host', type=str,
+        help='addres to bind webservice to',
+        default='127.0.0.1', required=False
+    )
+    parser.add_argument(
+        '--port', metavar='port', type=int,
+        help='port to bind webservice to',
+        default=8080, required=False
+    )
     args = parser.parse_args()
     host = args.host
     port = args.port
