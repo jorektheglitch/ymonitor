@@ -51,11 +51,12 @@ class DBWriter:
             self.ygg_alive = True
         if self.coords != coords:
             self.coords = coords
-            print("[{}] Coords: [{}]".format(now, coords))
+            coords_str = str(coords)
+            print("[{}] Coords: {}".format(now, coords))
             hour, secs = divmod(dt.now(tz.utc).timestamp(), 3600)
             secs = int(secs)
             self.cursor.execute(
                 self.write_coords_change,
-                (hour*3600, secs, coords)
+                (hour*3600, secs, coords_str)
             )
             self.conn.commit()
