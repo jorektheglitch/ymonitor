@@ -37,9 +37,9 @@ def extract_coords(api_response: dict) -> str:
     """
     Extract node coords from Yggdrasil Admin API's response.
     """
-    self = api_response.get('self', {})
-    for overview in self.values():
-        return overview['coords'][1:-1]
+    self_dict = api_response.get('self', {})
+    _, overview = self_dict.popitem()
+    return overview['coords'][1:-1]
 
 
 def mainloop(dbname: str) -> None:
